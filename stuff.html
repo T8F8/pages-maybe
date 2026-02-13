@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GamesCo® — smooth continuous edge</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: black;
+    }
+
+    .stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .intro-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: black;
+      z-index: 30;
+    }
+
+    .gamesco-text {
+      font-size: 12vw;
+      font-weight: 900;
+      color: #FF6B00;
+      text-transform: uppercase;
+      font-family: Arial, sans-serif;
+      text-shadow: 0 0 30px #FF6B00;
+      z-index: 32;
+      opacity: 0;
+      transform: scale(0.9);
+      animation: popFadeIn 0.7s forwards;
+      animation-delay: 0.2s;
+    }
+
+    @keyframes popFadeIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* LINE CONTAINER */
+    .edge-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 31;
+    }
+
+    /* INDIVIDUAL SEGMENTS - EACH DRAWS SMOOTHLY */
+    .segment-right-middle {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 0;
+      height: 8px;
+      background: #FF6B00;
+      box-shadow: 0 0 20px #FF6B00;
+      transform: translateY(-50%);
+      animation: drawRightMiddle 1.2s ease-out forwards;
+      animation-delay: 0.9s;
+    }
+
+    @keyframes drawRightMiddle {
+      0% { width: 0; right: 0; }
+      100% { width: 50%; right: 50%; }
+    }
+
+    .segment-left-middle {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 0;
+      height: 8px;
+      background: #FF6B00;
+      box-shadow: 0 0 20px #FF6B00;
+      transform: translateY(-50%);
+      animation: drawLeftMiddle 1.2s ease-out forwards;
+      animation-delay: 2.1s;
+    }
+
+    @keyframes drawLeftMiddle {
+      0% { width: 0; left: 0; }
+      100% { width: 50%; left: 50%; }
+    }
+
+    .segment-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 8px;
+      background: #FF6B00;
+      box-shadow: 0 0 20px #FF6B00;
+      animation: drawTop 1.8s ease-out forwards;
+      animation-delay: 1.2s;
+    }
+
+    @keyframes drawTop {
+      0% { width: 0; left: 0; }
+      100% { width: 100%; left: 0; }
+    }
+
+    .segment-right {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 8px;
+      height: 0;
+      background: #FF6B00;
+      box-shadow: 0 0 20px #FF6B00;
+      animation: drawRight 1.2s ease-out forwards;
+      animation-delay: 1.8s;
+    }
+
+    @keyframes drawRight {
+      0% { height: 0; top: 0; }
+      100% { height: 100%; top: 0; }
+    }
+
+    .segment-bottom {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 0;
+      height: 8px;
+      background: #FF6B00;
+      box-shadow: 0 0 20px #FF6B00;
+      animation: drawBottom 1.8s ease-out forwards;
+      animation-delay: 2.4s;
+    }
+
+    @keyframes drawBottom {
+      0% { width: 0; right: 0; }
+      100% { width: 100%; right: 0; }
+    }
+
+    .segment-left {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 8px;
+      height: 0;
+      background: #FF6B00;
+      box-shadow: 0 0 20px #FF6B00;
+      animation: drawLeft 1.2s ease-out forwards;
+      animation-delay: 3.0s;
+    }
+
+    @keyframes drawLeft {
+      0% { height: 0; bottom: 0; }
+      100% { height: 50%; bottom: 0; }
+    }
+
+    /* BOOM */
+    .boom-flash {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,107,0,0.6) 0%, rgba(255,107,0,0) 80%);
+      opacity: 0;
+      animation: boomPulse 0.6s ease-out forwards;
+      animation-delay: 4.0s;
+      z-index: 35;
+    }
+
+    @keyframes boomPulse {
+      0% { opacity: 0; transform: scale(0.95); }
+      30% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.2); }
+    }
+
+    /* LOGIN SCREEN */
+    .login-screen {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: black;
+      z-index: 20;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.7s ease-in;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-screen.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .login-content {
+      color: white;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      color: #FF6B00;
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 20px rgba(255,107,0,0.3);
+    }
+
+    .accounts-container {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .avatar-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .avatar-pfp {
+      width: 100px;
+      height: 100px;
+      background: #1a1a1a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      border: 3px solid #333;
+      transition: all 0.1s;
+    }
+
+    .avatar-card.selected .avatar-pfp {
+      border-color: #FF6B00;
+      box-shadow: 0 0 30px #FF6B00;
+    }
+
+    .avatar-username {
+      margin-top: 0.5rem;
+      color: white;
+    }
+
+    .guest-link {
+      color: #FF8C3A;
+      cursor: pointer;
+      border-bottom: 2px solid #FF8C3A;
+    }
+
+    .step-2 {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hidden-step {
+      display: none !important;
+    }
+
+    .badge-pfp {
+      width: 120px;
+      height: 120px;
+      background: #1a1a1a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      border: 4px solid #FF6B00;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 30px rgba(255,107,0,0.6);
+    }
+
+    .badge-name {
+      font-size: 2rem;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .password-field {
+      padding: 1rem;
+      background: black;
+      border: 2px solid #FF6B00;
+      border-radius: 60px;
+      color: white;
+      margin: 1rem 0;
+    }
+
+    .play-btn {
+      background: #FF6B00;
+      border: none;
+      border-radius: 60px;
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .different-account {
+      color: white;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    .demo-hint {
+      color: rgba(255,140,60,0.5);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <!-- INTRO - SMOOTH CONTINUOUS SEGMENTS -->
+    <div class="intro-container" id="introAnimation">
+      <span class="gamesco-text">GAMESCO®</span>
+      
+      <div class="edge-line">
+        <!-- SEGMENT 1: Right middle → left middle (smooth, 1.2s) -->
+        <div class="segment-right-middle"></div>
+        
+        <!-- SEGMENT 2: Top edge (smooth, 1.8s) -->
+        <div class="segment-top"></div>
+        
+        <!-- SEGMENT 3: Right edge (smooth, 1.2s) -->
+        <div class="segment-right"></div>
+        
+        <!-- SEGMENT 4: Bottom edge (smooth, 1.8s) -->
+        <div class="segment-bottom"></div>
+        
+        <!-- SEGMENT 5: Left edge (smooth, 1.2s) -->
+        <div class="segment-left"></div>
+        
+        <!-- SEGMENT 6: Left middle completion (smooth, 1.2s) -->
+        <div class="segment-left-middle"></div>
+      </div>
+      
+      <div class="boom-flash"></div>
+    </div>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+      <div class="login-content">
+        <div id="step1Container">
+          <div class="page-header">
+            <h1>GAMESCO®</h1>
+            <p>CHOOSE PROFILE</p>
+          </div>
+
+          <div class="accounts-container">
+            <div class="avatar-card" data-username="PLAYER1">
+              <div class="avatar-pfp">🎮</div>
+              <span class="avatar-username">PLAYER1</span>
+            </div>
+            <div class="avatar-card" data-username="PLAYER2">
+              <div class="avatar-pfp">👾</div>
+              <span class="avatar-username">PLAYER2</span>
+            </div>
+            <div class="avatar-card" data-username="NINJA">
+              <div class="avatar-pfp">🥷</div>
+              <span class="avatar-username">NINJA</span>
+            </div>
+            <div class="avatar-card" data-username="PIXEL">
+              <div class="avatar-pfp">🕹️</div>
+              <span class="avatar-username">PIXEL</span>
+            </div>
+            <div class="avatar-card" data-username="BLASTER">
+              <div class="avatar-pfp">🚀</div>
+              <span class="avatar-username">BLASTER</span>
+            </div>
+            <div class="avatar-card" data-username="ORBIT">
+              <div class="avatar-pfp">🌙</div>
+              <span class="avatar-username">ORBIT</span>
+            </div>
+          </div>
+
+          <div>
+            <span class="guest-link" id="guestLoginBtn">continue as guest →</span>
+          </div>
+        </div>
+
+        <div id="step2Container" class="step-2 hidden-step">
+          <div class="badge-pfp" id="badgePfp">🎮</div>
+          <span class="badge-name" id="badgeUsername">PLAYER1</span>
+          <input type="password" id="passwordInput" class="password-field" placeholder="password">
+          <button class="play-btn" id="playButton">PLAY</button>
+          <a class="different-account" id="backToAccounts">← different account</a>
+          <div class="demo-hint">demo: "gamesco"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // INTRO TIMING - Wait for full smooth animation
+    const introEl = document.getElementById('introAnimation');
+    const loginScreen = document.getElementById('loginScreen');
+
+    // Timeline:
+    // 0.2s: text pop
+    // 0.9s: right-middle starts drawing (1.2s)
+    // 1.2s: top starts drawing (1.8s)
+    // 1.8s: right starts drawing (1.2s)
+    // 2.1s: left-middle starts drawing (1.2s)
+    // 2.4s: bottom starts drawing (1.8s)
+    // 3.0s: left starts drawing (1.2s)
+    // 4.0s: BOOM
+    // 4.7s: fade to login
+    setTimeout(() => {
+      introEl.style.transition = 'opacity 0.7s ease-out';
+      introEl.style.opacity = '0';
+      
+      setTimeout(() => {
+        introEl.style.display = 'none';
+        loginScreen.classList.add('visible');
+      }, 700);
+    }, 4700);
+
+    // ACCOUNT SELECTION
+    const step1 = document.getElementById('step1Container');
+    const step2 = document.getElementById('step2Container');
+    const avatarCards = document.querySelectorAll('.avatar-card');
+    const guestBtn = document.getElementById('guestLoginBtn');
+    const backBtn = document.getElementById('backToAccounts');
+    const badgePfp = document.getElementById('badgePfp');
+    const badgeUsername = document.getElementById('badgeUsername');
+    const passwordInput = document.getElementById('passwordInput');
+    const playBtn = document.getElementById('playButton');
+
+    let selectedUsername = null;
+
+    function selectAccount(card, username, pfpEmoji) {
+      avatarCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedUsername = username;
+      step1.classList.add('hidden-step');
+      step2.classList.remove('hidden-step');
+      badgePfp.textContent = pfpEmoji;
+      badgeUsername.textContent = username;
+      passwordInput.value = '';
+    }
+
+    avatarCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const username = card.dataset.username;
+        const pfpEmoji = card.querySelector('.avatar-pfp').textContent;
+        selectAccount(card, username, pfpEmoji);
+      });
+    });
+
+    guestBtn.addEventListener('click', () => {
+      alert('🎮 GUEST LOGIN');
+    });
+
+    backBtn.addEventListener('click', () => {
+      step2.classList.add('hidden-step');
+      step1.classList.remove('hidden-step');
+      selectedUsername = null;
+      avatarCards.forEach(c => c.classList.remove('selected'));
+    });
+
+    playBtn.addEventListener('click', () => {
+      if (!selectedUsername) {
+        step2.classList.add('hidden-step');
+        step1.classList.remove('hidden-step');
+        return;
+      }
+
+      if (passwordInput.value === 'gamesco') {
+        alert(`✅ WELCOME, ${selectedUsername}!`);
+      } else {
+        alert('Wrong password (use "gamesco")');
+      }
+    });
+
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') playBtn.click();
+    });
+  </script>
+</body>
+</html>
